@@ -12,14 +12,14 @@ const fs = require('fs');
 //     sessionCfg = require(SESSION_FILE_PATH);
 // }
 
-const client = new Client({ puppeteer: { headless: true }, session: sessionCfg });
-// const client = new Client();
+// const client = new Client({ puppeteer: { headless: true }, session: sessionCfg });
+const client = new Client();
 
 client.initialize();
 
 client.on('qr', (qr) => {
     console.log('QR : ', qr);
-    qrcode.generate(qr);
+   // qrcode.generate(qr);
 });
 
 // if (fs.existsSync(SESSION_FILE_PATH)) {
