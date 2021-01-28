@@ -66,15 +66,13 @@ router.post('/wa', (req, res) => {
     if (tipe === "1") {
         if (pesan === "") {
             body = "Admin || Pesanan Baru !! Mohon cek Laman Admin !!"
-        }else{
-            body = pesan
         }
     }else if (tipe === "2") {
         if (pesan === "") {
             body = "Kurir || Pesanan Baru !! Mohon cek Laman Admin !!"
-        }else{
-            body = pesan
         }
+    }else{
+        body = pesan
     }
     client.sendMessage("6285157800430-1611653607@g.us", body)
         .then(() => {
