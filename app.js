@@ -13,6 +13,11 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
+router.post('/try', (req, res) => {
+    let body = req.body.messages
+    res.json("Messages : ", body)
+})
+
 app.use((err, req, res, next) => {
     // because err.status is undefined 
     res.status(404).json({
