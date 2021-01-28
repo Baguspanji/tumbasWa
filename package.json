@@ -4,6 +4,8 @@
   "description": "WhatsApp Gatway Jongjava",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/Baguspanji/tumbasWa/issues"
   },
-  "homepage": "https://github.com/Baguspanji/tumbasWa#readme"
+  "homepage": "https://github.com/Baguspanji/tumbasWa#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "whatsapp-web.js": "^1.12.0"
+  }
 }
