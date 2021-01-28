@@ -15,11 +15,11 @@ app.get('/', (req, res) => {
 
 app.post('/try', (req, res) => {
     let body = req.body.messages
-    res.json("Messages : ", body)
+    res.json(body);
 })
 
 app.use((err, req, res, next) => {
-    // because err.status is undefined 
+  // because err.status is undefined 
     res.status(404).json({
         error: {
             message: err.message
