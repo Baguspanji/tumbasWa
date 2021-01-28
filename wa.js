@@ -6,37 +6,35 @@ const { Client } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 
-const puppeteer = require('puppeteer');
+const SESSION_FILE_PATH = './session.data.json';
+let sessionCfg;
+if (fs.existsSync(SESSION_FILE_PATH)) {
+    sessionCfg = require(SESSION_FILE_PATH);
+}
 
-// const SESSION_FILE_PATH = './session.data.json';
-// let sessionCfg;
-// if (fs.existsSync(SESSION_FILE_PATH)) {
-//     sessionCfg = require(SESSION_FILE_PATH);
-// }
-
-// const client = new Client({ puppeteer: { headless: true }, session: sessionCfg });
-const client = new Client();
+const client = new Client({ puppeteer: { headless: true }, session: sessionCfg });
+// const client = new Client();
 
 client.initialize();
 
 client.on('qr', (qr) => {
     console.log('QR : ', qr);
-   // qrcode.generate(qr);
+    qrcode.generate(qr);
 });
 
-// if (fs.existsSync(SESSION_FILE_PATH)) {
-//     console.log("Client is ready!");
-// } else {
-//     client.on('authenticated', (session) => {
-//         console.log('AUTHENTICATED', session);
-//         sessionCfg = session;
-//         fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
-//             if (err) {
-//                 console.error(err);
-//             }
-//         });
-//     });
-// }
+if (fs.existsSync(SESSION_FILE_PATH)) {
+    console.log("Client is ready!");
+} else {
+    client.on('authenticated', (session) => {
+        console.log('AUTHENTICATED', session);
+        sessionCfg = session;
+        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+}
 
 client.on('ready', () => {
     console.log('Client is ready!');
@@ -48,7 +46,7 @@ client.on('message', msg => {
             .then(() => {
                 console.log("Success");
             });
-    } else if(msg.body === "$id") {
+    } else if (msg.body === "$id") {
         client.sendMessage(msg.from, msg.from)
             .then(() => {
                 console.log("Success");
