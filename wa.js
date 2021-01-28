@@ -18,8 +18,11 @@ const client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] 
 client.initialize();
 
 client.on('qr', (qr) => {
-    console.log('QR : ', qr);
-    qrcode.generate(qr);
+    console.log('QR : ', qr
+    
+    
+     );
+    // qrcode.generate(qr);
 });
 
 if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -56,12 +59,28 @@ client.on('message', msg => {
 });
 
 router.post('/wa', (req, res) => {
-    let body = req.body.messages
+    let tipe = req.body.tipe
+    let pesan = req.body.pesan
+    let body = ""
+
+    if (tipe === "1") {
+        if (pesan === "") {
+            body = "Admin || Pesanan Baru !! Mohon cek Laman Admin !!"
+        }else{
+            body = pesan
+        }
+    }else if (tipe === "2") {
+        if (pesan === "") {
+            body = "Kurir || Pesanan Baru !! Mohon cek Laman Admin !!"
+        }else{
+            body = pesan
+        }
+    }
     client.sendMessage("6285157800430-1611653607@g.us", body)
         .then(() => {
             console.log("Send Success");
+            res.json(body)
         });
-    res.json("Messages : ", body)
 })
 
 module.exports = router

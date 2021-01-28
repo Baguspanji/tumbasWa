@@ -18,14 +18,14 @@ app.post('/try', (req, res) => {
     res.json(body);
 })
 
-app.use((err, req, res, next) => {
-  // because err.status is undefined 
-    res.status(404).json({
-        error: {
-            message: err.message
-        }
-    });
-})
+// app.use((err, req, res, next) => {
+//   // because err.status is undefined 
+//     res.status(404).json({
+//         error: {
+//             message: err.message
+//         }
+//     });
+// })
 
 var port = process.env.PORT || 3000;
 app.listen(port, () => {
