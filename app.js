@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-router.post('/try', (req, res) => {
+app.post('/try', (req, res) => {
     let body = req.body.messages
     res.json("Messages : ", body)
 })
