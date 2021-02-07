@@ -49,7 +49,7 @@ client.on('message', msg => {
     } else if (msg.body === "$id") {
         client.sendMessage(msg.from, msg.from)
             .then(() => {
-                console.log("Success");
+                console.log(msg);
             });
     } else if (msg.body === "$conn") {
         client.sendMessage(msg.from, "Koneksi Aman!!")
@@ -76,7 +76,7 @@ router.post('/wa', (req, res) => {
     }else{
         body = pesan
     }
-    client.sendMessage("6285815421118-1611653607@g.us", body)
+    client.sendMessage("6285157800430-1611653607@g.us", body)
         .then(() => {
             console.log("Send Success");
             res.json(body)
