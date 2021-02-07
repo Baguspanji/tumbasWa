@@ -44,10 +44,15 @@ client.on('message', msg => {
     if (msg.body === "$hello") {
         client.sendMessage(msg.from, "Selamat datang Admin Tumbas!!")
             .then(() => {
-                console.log(msg);
+                console.log("Success");
             });
     } else if (msg.body === "$id") {
         client.sendMessage(msg.from, msg.from)
+            .then(() => {
+                console.log("Success");
+            });
+    } else if (msg.body === "$conn") {
+        client.sendMessage(msg.from, "Koneksi Aman!!")
             .then(() => {
                 console.log("Success");
             });
@@ -71,7 +76,7 @@ router.post('/wa', (req, res) => {
     }else{
         body = pesan
     }
-    client.sendMessage("6285157800430-1611653607@g.us", body)
+    client.sendMessage("6285815421118-1611653607@g.us", body)
         .then(() => {
             console.log("Send Success");
             res.json(body)
