@@ -18,11 +18,8 @@ const client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] 
 client.initialize();
 
 client.on('qr', (qr) => {
-    console.log('QR : ', qr
-    
-    
-     );
-    // qrcode.generate(qr);
+    console.log('QR : ', qr);
+    qrcode.generate(qr);
 });
 
 if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -47,7 +44,7 @@ client.on('message', msg => {
     if (msg.body === "$hello") {
         client.sendMessage(msg.from, "Selamat datang Admin Tumbas!!")
             .then(() => {
-                console.log("Success");
+                console.log(msg);
             });
     } else if (msg.body === "$id") {
         client.sendMessage(msg.from, msg.from)
