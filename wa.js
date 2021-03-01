@@ -72,6 +72,7 @@ client.on('message', msg => {
 router.post('/wa', (req, res) => {
     let tipe = req.body.tipe
     let pesan = req.body.pesan
+    let wilayah = req.body.wilayah
     let body = ""
 
     if (tipe === "1") {
@@ -85,11 +86,20 @@ router.post('/wa', (req, res) => {
     } else {
         body = pesan
     }
-    client.sendMessage("6285815421118-1612822412@g.us", body)
-        .then(() => {
-            console.log("Send Success");
-            res.json(body)
-        });
+
+    if (wilayah == "purwosari") {
+        client.sendMessage("6285815421118-1614597478@g.us", body)
+            .then(() => {
+                console.log("Send Success");
+                res.json(body)
+            });
+    } else {
+        client.sendMessage("6285815421118-1612822412@g.us", body)
+            .then(() => {
+                console.log("Send Success");
+                res.json(body)
+            });
+    }
 })
 
 module.exports = router
