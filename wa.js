@@ -12,7 +12,7 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
     sessionCfg = require(SESSION_FILE_PATH);
 }
 
-const client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
+const client = new Client({ puppeteer: { headless: false, args: ['--no-sandbox'] }, session: sessionCfg });
 // const client = new Client();
 
 client.initialize();
@@ -28,7 +28,7 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
     client.on('authenticated', (session) => {
         console.log('AUTHENTICATED', session);
         sessionCfg = session;
-        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
+        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
             if (err) {
                 console.error(err);
             }
@@ -69,11 +69,11 @@ router.post('/wa', (req, res) => {
         if (pesan === "") {
             body = "Admin || Pesanan Baru !! Mohon cek Laman Admin !!"
         }
-    }else if (tipe === "2") {
+    } else if (tipe === "2") {
         if (pesan === "") {
             body = "Kurir || Pesanan Baru !! Mohon cek Laman Admin !!"
         }
-    }else{
+    } else {
         body = pesan
     }
     client.sendMessage("6285815421118-1612822412@g.us", body)
