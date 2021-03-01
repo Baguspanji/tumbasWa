@@ -88,7 +88,7 @@ router.post('/wa', (req, res) => {
     }
 
     if (wilayah == "purwosari") {
-        client.sendMessage("6285815421118-1614597478@g.us", 'purwosari|' + body)
+        client.sendMessage("6285815421118-1614597478@g.us", 'Purwosari | ' + body)
             .then(() => {
                 console.log("Send Success");
                 res.json({
@@ -97,7 +97,7 @@ router.post('/wa', (req, res) => {
                 })
             });
     } else {
-        client.sendMessage("6285815421118-1612822412@g.us", 'rembang|' + body)
+        client.sendMessage("6285815421118-1612822412@g.us", 'Rembang | ' + body)
             .then(() => {
                 console.log("Send Success");
                 res.json({
