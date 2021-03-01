@@ -88,16 +88,22 @@ router.post('/wa', (req, res) => {
     }
 
     if (wilayah == "purwosari") {
-        client.sendMessage("6285815421118-1614597478@g.us", body)
+        client.sendMessage("6285815421118-1614597478@g.us", 'purwosari|' + body)
             .then(() => {
                 console.log("Send Success");
-                res.json(body)
+                res.json({
+                    'wilayah': 'purwosari',
+                    'data': body
+                })
             });
     } else {
-        client.sendMessage("6285815421118-1612822412@g.us", body)
+        client.sendMessage("6285815421118-1612822412@g.us", 'rembang|' + body)
             .then(() => {
                 console.log("Send Success");
-                res.json(body)
+                res.json({
+                    'wilayah': 'rembang',
+                    'data': body
+                })
             });
     }
 })
