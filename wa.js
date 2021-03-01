@@ -7,6 +7,7 @@ const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 
 const SESSION_FILE_PATH = './session.data.json';
+
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
     sessionCfg = require(SESSION_FILE_PATH);
@@ -14,7 +15,7 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
 
 const client = new Client({
     puppeteer: {
-        headless: false,
+        headless: true,
         // defaultViewport: null,
         args: [
             '--no-sandbox',
@@ -32,19 +33,24 @@ client.on('qr', (qr) => {
     qrcode.generate(qr);
 });
 
-if (fs.existsSync(SESSION_FILE_PATH)) {
-    console.log("Client is ready!");
-} else {
-    client.on('authenticated', (session) => {
-        console.log('AUTHENTICATED', session);
-        sessionCfg = session;
-        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
-            if (err) {
-                console.error(err);
-            }
-        });
+// if (fs.existsSync(SESSION_FILE_PATH)) {
+//     console.log("Client is ready!");
+// } else {
+client.on('authenticated', (session) => {
+    console.log('AUTHENTICATED', session);
+    sessionCfg = session;
+    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
+        if (err) {
+            console.error(err);
+        }
     });
-}
+});
+// }
+
+client.on('auth_failure', msg => {
+    // Fired if session restore was unsuccessfull
+    console.error('AUTHENTICATION FAILURE', msg);
+});
 
 client.on('ready', () => {
     console.log('Client is ready!');
