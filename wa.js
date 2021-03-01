@@ -1,12 +1,11 @@
+const fs = require('fs');
 const express = require('express')
 const router = express.Router()
 
 const { Client } = require('whatsapp-web.js');
-
 const qrcode = require('qrcode-terminal');
-const fs = require('fs');
 
-const SESSION_FILE_PATH = './session.data.json';
+const SESSION_FILE_PATH = './session.json';
 
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -33,24 +32,19 @@ client.on('qr', (qr) => {
     qrcode.generate(qr);
 });
 
-// if (fs.existsSync(SESSION_FILE_PATH)) {
-//     console.log("Client is ready!");
-// } else {
-client.on('authenticated', (session) => {
-    console.log('AUTHENTICATED', session);
-    sessionCfg = session;
-    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
-        if (err) {
-            console.error(err);
-        }
+if (fs.existsSync(SESSION_FILE_PATH)) {
+    console.log("Client is ready!");
+} else {
+    client.on('authenticated', (session) => {
+        console.log('AUTHENTICATED', session);
+        sessionCfg = session;
+        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
+            if (err) {
+                console.error(err);
+            }
+        });
     });
-});
-// }
-
-client.on('auth_failure', msg => {
-    // Fired if session restore was unsuccessfull
-    console.error('AUTHENTICATION FAILURE', msg);
-});
+}
 
 client.on('ready', () => {
     console.log('Client is ready!');
@@ -73,7 +67,6 @@ client.on('message', msg => {
                 console.log("Success");
             });
     }
-    // client.sendMessage("6285157800430-1611653607@g.us", 'pong');
 });
 
 router.post('/wa', (req, res) => {
