@@ -12,7 +12,17 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
     sessionCfg = require(SESSION_FILE_PATH);
 }
 
-const client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
+const client = new Client({
+    puppeteer: {
+        headless: true,
+        defaultViewport: null,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]
+    },
+    session: sessionCfg
+});
 // const client = new Client();
 
 client.initialize();
