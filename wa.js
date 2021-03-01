@@ -14,8 +14,8 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
 
 const client = new Client({
     puppeteer: {
-        headless: true,
-        defaultViewport: null,
+        headless: false,
+        // defaultViewport: null,
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox'
