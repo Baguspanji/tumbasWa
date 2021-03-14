@@ -108,4 +108,18 @@ router.post('/wa', (req, res) => {
     }
 })
 
+router.post('/waSend', (req, res) => {
+    let nomor = req.body.nomor
+    let pesan = req.body.pesan
+
+    client.sendMessage(nomor + "@c.us", pesan)
+        .then(() => {
+            console.log("Send Success");
+            res.json({
+                'nomor': nomor,
+                'messages': pesan
+            })
+        });
+})
+
 module.exports = router
