@@ -81,14 +81,14 @@ router.post('/wa', (req, res) => {
         }
     } else if (tipe === "2") {
         if (pesan === "") {
-            body = "Kurir || Pesanan Baru !! Mohon cek Laman Admin !!"
+            body = "Kurir || Pesanan Baru !! Mohon cek Laman Pesanan !!"
         }
     } else {
         body = pesan
     }
 
     if (wilayah == "purwosari") {
-        client.sendMessage("6285815421118-1614597478@g.us", 'Purwosari | ' + body)
+        client.sendMessage("6285815421118-1614597478@g.us", body)
             .then(() => {
                 console.log("Send Success");
                 res.json({
@@ -97,7 +97,7 @@ router.post('/wa', (req, res) => {
                 })
             });
     } else {
-        client.sendMessage("6285815421118-1612822412@g.us", 'Rembang | ' + body)
+        client.sendMessage("6285815421118-1612822412@g.us", body)
             .then(() => {
                 console.log("Send Success");
                 res.json({
@@ -112,13 +112,18 @@ router.post('/waSend', (req, res) => {
     let nomor = req.body.nomor
     let pesan = req.body.pesan
 
-    client.sendMessage(nomor + "@c.us", pesan)
+    if (nomor.slice(0, 1) == "0") {
+        nomor = 62 + nomor.slice(1, 13)
+    } else if (nomor.slice(0, 1) == "+") {
+        nomor = nomor.slice(1, 13)
+    }
+
+    nomor = nomor.includes('@c.us') ? nomor : `${nomor}@c.us`;
+
+    client.sendMessage(nomor, pesan)
         .then(() => {
             console.log("Send Success");
-            res.json({
-                'nomor': nomor,
-                'messages': pesan
-            })
+            res.json({ nomor, pesan })
         });
 })
 
