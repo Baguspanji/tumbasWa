@@ -29,7 +29,7 @@ client.initialize();
 
 client.on('qr', (qr) => {
     console.log('QR : ', qr);
-    qrcode.generate(qr);
+    qrcode.generate(qr, { small: true });
 });
 
 if (fs.existsSync(SESSION_FILE_PATH)) {
