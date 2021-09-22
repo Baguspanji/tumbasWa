@@ -25,8 +25,6 @@ const client = new Client({
 });
 // const client = new Client();
 
-client.initialize();
-
 client.on('qr', (qr) => {
     console.log('QR : ', qr);
     qrcode.generate(qr, { small: true });
@@ -47,16 +45,18 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
 }
 
 client.on('ready', () => {
+    client.sendMessage('6285785800430@c.us', "Server aktif!")
+        // client.sendMessage('6285815421118-1614597478@g.us', "Server aktif!")
+        .then(() => {
+            console.log("Success");
+        });
     console.log('Client is ready!');
 });
 
-client.on('message', msg => {
-    if (msg.body === "$hello") {
-        client.sendMessage(msg.from, "Selamat datang Admin Tumbas!!")
-            .then(() => {
-                console.log("Success");
-            });
-    } else if (msg.body === "$id") {
+client.initialize();
+
+client.on('message', async msg => {
+    if (msg.body === "$id") {
         client.sendMessage(msg.from, msg.from)
             .then(() => {
                 console.log(msg);
@@ -66,6 +66,15 @@ client.on('message', msg => {
             .then(() => {
                 console.log("Success");
             });
+    } else if (msg.body === '$info') {
+        let info = client.info;
+        client.sendMessage(msg.from, `
+            *Connection info*
+            User name: ${info.pushname}
+            My number: ${info.me.user}
+            Platform: ${info.platform}
+            WhatsApp version: ${info.phone.wa_version}
+        `);
     }
 });
 
@@ -126,5 +135,9 @@ router.post('/waSend', (req, res) => {
             res.json({ nomor, pesan })
         });
 })
+
+client.on('disconnected', (reason) => {
+    console.log('Client was logged out', reason);
+});
 
 module.exports = router
