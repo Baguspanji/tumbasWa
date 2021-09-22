@@ -45,8 +45,8 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
 }
 
 client.on('ready', () => {
-    client.sendMessage('6285785800430@c.us', "Server aktif!")
-        // client.sendMessage('6285815421118-1614597478@g.us', "Server aktif!")
+        //  client.sendMessage('6285785800430@c.us', "Server aktif!")
+        client.sendMessage('6285815421118-1614597478@g.us', "Server aktif!")
         .then(() => {
             console.log("Success");
         });
