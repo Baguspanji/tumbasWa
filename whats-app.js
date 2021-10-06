@@ -211,6 +211,47 @@ module.exports = function (app, io) {
         });
     });
 
+    app.post('/wa', (req, res) => {
+        let tipe = req.body.tipe
+        let pesan = req.body.pesan
+        let wilayah = req.body.wilayah
+        let body = ""
+    
+        if (tipe === "1") {
+            if (pesan === "") {
+                body = "Admin || Pesanan Baru !! Mohon cek Laman Admin !!"
+            }
+        } else if (tipe === "2") {
+            if (pesan === "") {
+                body = "Kurir || Pesanan Baru !! Mohon cek Laman Pesanan !!"
+            }
+        } else {
+            body = pesan
+        }
+
+        const client = sessions.find(sess => sess.id == 'admin').client;
+    
+        if (wilayah == "purwosari") {
+            client.sendMessage("6285815421118-1614597478@g.us", body)
+                .then(() => {
+                    console.log("Send Success");
+                    res.json({
+                        'wilayah': 'purwosari',
+                        'data': body
+                    })
+                });
+        } else {
+            client.sendMessage("6285815421118-1612822412@g.us", body)
+                .then(() => {
+                    console.log("Send Success");
+                    res.json({
+                        'wilayah': 'rembang',
+                        'data': body
+                    })
+                });
+        }
+    })
+
     // Send message
     app.post('/send-message', [
         body('number').notEmpty(),
