@@ -1,3 +1,6 @@
 node_modules/*
 package-lock.json
 session.json
+
+session/whatsapp-session*.json
+session/whatsapp-sessions.json

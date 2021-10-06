@@ -1,0 +1,18 @@
+POST http://localhost:3000/send-message HTTP/1.1
+Content-Type: application/json
+
+{
+    "sender": "panji",
+    "number": "085785800430",
+    "message": "test conn"
+}
+
+###
+POST http://localhost:3000/send-media HTTP/1.1
+Content-Type: application/json
+
+{
+    "number": "085785800430",
+    "caption": "test conn",
+    "file": ""
+}
