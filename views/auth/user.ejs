@@ -1,0 +1,273 @@
+<%- contentFor('body') %>
+    <style>
+        .hide {
+            display: none;
+        }
+
+        .profile-user-img {
+            width: 200px;
+            height: 200px;
+        }
+
+        #link {
+            color: blue;
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        .language-json {
+            background-color: darkslategray;
+            padding: 16px;
+            border-radius: 8px;
+            height: 80px;
+        }
+    </style>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+
+                    <!-- Profile Image -->
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile">
+                            <div class="text-center">
+                                <img class="profile-user-img img-fluid img-circle" src="/assets/img/user.png"
+                                    alt="User profile picture">
+                            </div>
+
+                            <h2 class="text-center mt-4">
+                                <%= data.username %>
+                            </h2>
+
+                            <p class="text-muted text-center">
+                                <%= data.email %>
+                            </p>
+
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+                <div class="col-md-4">
+
+                    <!-- Profile Image -->
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile">
+
+                            <div class="form-group">
+                                <label>User</label>
+                                <input type="text" class="form-control" id="client-id" required=""
+                                    value="<%= data.username %>" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="text" class="form-control" id="client-description" required=""
+                                    value="<%= data.email %>" readonly>
+                            </div>
+
+                            <button type="submit" id="add-client-btn" class="btn btn-success">
+                                Connect
+                            </button>
+
+                            <!-- <button type="submit" id="kill-client-btn" class="btn btn-danger" disabled>
+                                Disconnect
+                            </button> -->
+
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+                <div class="col-md-5">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Log</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="client-container">
+                                <div class="client hide">
+                                    <img src="" alt=" QR Code" id="qrcode">
+                                    <h4>Logs:</h4>
+                                    <ul class="logs"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-4 mb-4">
+                <!-- <div class="col-md-6">
+
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile">
+                            <div class="form-group">
+                                <label>Number</label>
+                                <input type="number" class="form-control" id="number" required="">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Message</label>
+                                <input type="text" class="form-control" id="message" required="">
+                            </div>
+
+                            <button type="submit" id="send-message" class="btn btn-success">
+                                Send
+                            </button>
+
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="col-md-6">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Docs</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <p id="link"></p>
+                            <code class="language-json">
+                                <span>{
+                                </span><span>  </span><span class="hljs-attr">"sender"</span><span>: </span><span style="color: rgb(162, 252, 162);">"<%= data.username %>"</span><span>,
+                                </span><span>  </span><span class="hljs-attr">"number"</span><span>: </span><span style="color: rgb(162, 252, 162);">"085xxx"</span><span>,
+                                </span><span>  </span><span class="hljs-attr">"message"</span><span>: </span><span style="color: rgb(162, 252, 162);">"Hello World"</span><span>
+                                </span>}
+                            </code>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+    <script>
+        var base_url = window.location.origin;
+
+        $(document).ready(function () {
+            console.log(base_url);
+
+            $('#link').text(`POST ${base_url}/send-message`);
+
+            $('#send-message').click(function () {
+                var sender = "<%= data.username %>";
+                var number = $('#number').val();
+                var message = $('#message').val();
+
+                console.log({ sender, number, message });
+
+                socket.emit('send-message', { sender, number, message });
+            });
+        });
+
+        $(document).ready(function () {
+            var socket = io();
+
+            // Ketika button tambah diklik
+            $('#add-client-btn').click(function () {
+                var clientId = $('#client-id').val();
+                var clientDescription = $('#client-description').val();
+                var template = $('.client').first().clone()
+                    .removeClass('hide')
+                    .addClass(clientId);
+                $('.client-container').append(template);
+
+                socket.emit('create-session', {
+                    id: clientId,
+                    description: clientDescription
+                });
+            });
+
+            $('#kill-client-btn').click(function () {
+                var clientId = $('#client-id').val();
+                var clientDescription = $('#client-description').val()
+
+                socket.emit('kill-session', {
+                    id: clientId,
+                    description: clientDescription
+                });
+            });
+
+            $('#send-message').click(function () {
+                var sender = "<%= data.username %>";
+                var number = $('#number').val();
+                var message = $('#message').val();
+
+                console.log({ sender, number, message });
+
+                socket.emit('wa-message', { sender: sender, number: number, message: message });
+            });
+
+            socket.on('init', function (data) {
+                $('.client-container .client').not(':first').remove();
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var session = data[i];
+                    if (session.id == '<%= data.username %>') {
+
+                        var clientId = session.id;
+                        var clientDescription = session.description;
+                        var template = $('.client').first().clone()
+                            .removeClass('hide')
+                            .addClass(clientId);
+                        $('.client-container').append(template);
+
+                        if (session.ready) {
+                            $(`.client.${session.id} .logs`).append($('<li>').text('Whatsapp is ready!'));
+                            $(`.client.${session.id} #qrcode`).hide();
+
+                            $('#add-client-btn').prop('disabled', true);
+                            $('#kill-client-btn').prop('disabled', false);
+                        } else {
+                            $(`.client.${session.id} .logs`).append($('<li>').text('Connecting...'));
+
+                            $('#add-client-btn').prop('disabled', false);
+                            $('#kill-client-btn').prop('disabled', true);
+                        }
+                    }
+                }
+            });
+
+            socket.on('remove-session', function (id) {
+                if (id == '<%= data.username %>') {
+                    $(`.client.${id}`).remove();
+                }
+            });
+
+            socket.on('message', function (data) {
+                if (data.id == '<%= data.username %>') {
+                    $(`.client.${data.id} .logs`).append($('<li>').text(data.text));
+                }
+            });
+
+            socket.on('qr', function (data) {
+                if (data.id == '<%= data.username %>') {
+                    $(`.client.${data.id} #qrcode`).attr('src', data.src);
+                    $(`.client.${data.id} #qrcode`).show();
+                }
+            });
+
+            socket.on('ready', function (data) {
+                if (data.id == '<%= data.username %>') {
+                    $(`.client.${data.id} #qrcode`).hide();
+                }
+            });
+
+            socket.on('authenticated', function (data) {
+                if (data.id == '<%= data.username %>') {
+                    $(`.client.${data.id} #qrcode`).hide();
+                }
+            });
+        });
+    </script>

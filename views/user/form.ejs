@@ -1,0 +1,55 @@
+<%- contentFor('body') %>
+
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+            <!-- jquery validation -->
+            <div class="card card-lightblue">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <%= title %>
+                    </h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form class="needs-validation" action="<%= title.split(' ')[0] == 'Tambah' ? '/user' : '/user/' + data._id %>" method="POST" novalidate>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name="username" required="" value="<%= (typeof data !=='undefined' ) ? data.username : '' %>">
+                            <div class="invalid-feedback">
+                                Input Username
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" class="form-control" name="name" required="" value="<%= (typeof data !=='undefined' ) ? data.name : '' %>">
+                            <div class="invalid-feedback">
+                                Input Name
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" name="email" required="" value="<%= (typeof data !=='undefined' ) ? data.email : '' %>">
+                            <div class="invalid-feedback">
+                                Input Name
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-success">
+                            <%= title.split(' ')[0] == 'Tambah' ? 'Simpan' : 'Update' %>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card -->
+        </div>
+        <!--/.col (left) -->
+        <!-- right column -->
+        <div class="col-md-6">
+
+        </div>
+        <!--/.col (right) -->
+    </div>
