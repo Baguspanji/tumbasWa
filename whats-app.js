@@ -6,6 +6,7 @@ const qrcode = require('qrcode');
 const fs = require('fs');
 
 const { phoneNumberFormatter } = require('./helper/formatter');
+const ChatHistory = require('./model/chatHistory');
 
 module.exports = function (app, io) {
 
@@ -216,7 +217,7 @@ module.exports = function (app, io) {
         let pesan = req.body.pesan
         let wilayah = req.body.wilayah
         let body = ""
-    
+
         if (tipe === "1") {
             if (pesan === "") {
                 body = "Admin || Pesanan Baru !! Mohon cek Laman Admin !!"
@@ -230,7 +231,7 @@ module.exports = function (app, io) {
         }
 
         const client = sessions.find(sess => sess.id == 'admin').client;
-    
+
         if (wilayah == "purwosari") {
             client.sendMessage("6285815421118-1614597478@g.us", body)
                 .then(() => {
@@ -277,6 +278,18 @@ module.exports = function (app, io) {
         const client = sessions.find(sess => sess.id == sender).client;
 
         client.sendMessage(number, message).then(response => {
+            try {
+                ChatHistory.create({ 
+                    username: sender,
+                    number_send: number,
+                    message: message
+                }).then(res => {
+                    console.log(res);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+
             res.status(200).json({
                 status: true,
                 response: response

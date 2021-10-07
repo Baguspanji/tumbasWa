@@ -3,10 +3,14 @@ const bcrypt = require('bcryptjs')
 
 exports.findAll = async (req, res) => {
     require('../helper/auth')(req, res, 'admin')
+    const alertMessage = req.flash("alertMessage");
+    const alertStatus = req.flash("alertStatus");
+    const alert = { message: alertMessage, status: alertStatus };
 
     const users = await User.find();
 
     res.locals = {
+        alert,
         title: 'List Users',
         users: users,
         tabel_list: '/get-user'

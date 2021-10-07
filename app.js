@@ -19,6 +19,7 @@ const mongoose = require('mongoose');
 const server = http.createServer(app);
 const io = socketIO(server);
 
+// Configure
 app.use(flash());
 app.use(express.json());
 app.use(express.urlencoded({
@@ -29,7 +30,11 @@ var sesi = {
     secret: 'top_secret',
     resave: false,
     saveUninitialized: true,
-    cookie: {}
+    cookie: {
+        secure: false,
+        maxAge: 3600,
+        expires: new Date(Date.now() + 3600000)
+    }
 }
 
 app.use(session(sesi))
@@ -64,6 +69,21 @@ app.get('/', (req, res, next) => {
 require('./whats-app')(app, io);
 require('./route/web')(app)
 
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    next(createError(404));
+});
+
+// error handler
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+});
 
 try {
     server.listen(port, () => console.log(`Server listen on http://localhost:${port}`))
