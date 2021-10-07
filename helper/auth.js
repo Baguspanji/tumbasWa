@@ -5,6 +5,10 @@ module.exports = function (req, res, role) {
     if (!sess.loggedIn) res.redirect('/login');
 
     if (role == 'admin') {
-        if (sess.role == 'user') res.redirect('/login');
-    }else{}
+        if (sess.role == 'user') {
+            req.flash("alertMessage", 'Anda harus login sebagai Admin!');
+            req.flash("alertStatus", "danger");
+            res.redirect('/login');
+        }
+    } else { }
 }

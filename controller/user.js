@@ -100,7 +100,7 @@ exports.formEdit = async (req, res) => {
     const user = await User.findOne({ '_id': req.params.id });
 
     res.locals = {
-        title: 'Edit Barang',
+        title: 'Edit User',
         data: user,
     };
 
@@ -111,11 +111,8 @@ exports.update = async (req, res) => {
     require('../helper/auth')(req, res, 'admin')
     try {
         const { name, username, email } = req.body;
-        const user = await User.findOne({ _id: req.params.id });
-        user.name = name;
-        user.nusernameim = username;
-        user.email = email;
-        await user.save();
+        await User.updateOne({ '_id': req.params.id }, { name, username, email });
+        
         req.flash("alertMessage", "Success edit data User");
         req.flash("alertStatus", "success");
         res.redirect("/user");
@@ -130,10 +127,11 @@ exports.destroy = async (req, res) => {
     require('../helper/auth')(req, res, 'admin')
     try {
         const user = await User.findOne({ _id: req.params.id });
+        var username = user.username;
+
         await user.remove();
-        req.flash("alertMessage", "Success delete data User");
-        req.flash("alertStatus", "warning");
-        res.redirect("/user");
+        
+        res.redirect(`/destroy/${username}`);
     } catch (error) {
         req.flash("alertMessage", `${error.message}`);
         req.flash("alertStatus", "danger");

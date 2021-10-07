@@ -25,6 +25,16 @@
 
     <section class="content">
         <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-auto col-12">
+                    <% if(alert.message !="" ) { %>
+                        <div class="alert alert-<%= alert.status %>" role="alert">
+                            <%= alert.message %>
+                        </div>
+                        <% } %>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-3">
 
@@ -44,6 +54,9 @@
                                 <%= data.email %>
                             </p>
 
+                            <div class="row justify-content-center">
+                                <a href="/user-edit/" class="btn btn-primary">Edit User</a>
+                            </div>
                         </div>
                         <!-- /.card-body -->
                     </div>

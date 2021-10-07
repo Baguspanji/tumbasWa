@@ -143,6 +143,31 @@ module.exports = function (app, io) {
         }
     }
 
+    const destroySession = function (username) {
+        const SESSION_FILE_PATH = `./session/whatsapp-session-${username}.json`;
+
+        const user = sessions.find(sess => sess.id == username);
+
+        if (user != null) {
+            const client = sessions.find(sess => sess.id == username).client;
+            fs.unlinkSync(SESSION_FILE_PATH, function (err) {
+                if (err) return console.log(err);
+                console.log('Session file deleted!');
+            });
+
+            client.destroy();
+            client.initialize();
+
+            // Menghapus pada file sessions
+            const savedSessions = getSessionsFile();
+            const sessionIndex = savedSessions.findIndex(sess => sess.id == username);
+            savedSessions.splice(sessionIndex, 1);
+            setSessionsFile(savedSessions);
+
+            io.emit('remove-session', username);
+        }
+    }
+
     const init = function (socket) {
         const savedSessions = getSessionsFile();
 
@@ -170,46 +195,39 @@ module.exports = function (app, io) {
 
         socket.on('kill-session', function (data) {
 
-            const SESSION_FILE_PATH = `./session/whatsapp-session-${data.id}.json`;
-            const client = sessions.find(sess => sess.id == data.id).client;
-
-            fs.unlinkSync(SESSION_FILE_PATH, function (err) {
-                if (err) return console.log(err);
-                console.log('Session file deleted!');
-            });
-
-            client.destroy();
-            client.initialize();
-
-            // Menghapus pada file sessions
-            const savedSessions = getSessionsFile();
-            const sessionIndex = savedSessions.findIndex(sess => sess.id == data.id);
-            savedSessions.splice(sessionIndex, 1);
-            setSessionsFile(savedSessions);
-
-            io.emit('remove-session', data.id);
+            destroySession(data.id)
         });
 
-        socket.on('wa-message', function (data) {
+        // socket.on('wa-message', function (data) {
 
-            const sender = data.sender;
-            const number = phoneNumberFormatter(data.number);
-            const message = data.message;
+        //     const sender = data.sender;
+        //     const number = phoneNumberFormatter(data.number);
+        //     const message = data.message;
 
-            const client = sessions.find(sess => sess.id == sender).client;
+        //     const client = sessions.find(sess => sess.id == sender).client;
 
-            client.sendMessage(number, message).then(response => {
-                console.log({
-                    status: true,
-                    response: response
-                });
-            }).catch(err => {
-                console.log({
-                    status: false,
-                    response: err
-                });
-            });
-        });
+        //     client.sendMessage(number, message).then(response => {
+        //         console.log({
+        //             status: true,
+        //             response: response
+        //         });
+        //     }).catch(err => {
+        //         console.log({
+        //             status: false,
+        //             response: err
+        //         });
+        //     });
+        // });
+    });
+
+    app.get('/destroy/:id', (req, res) => {
+        var id = req.params.id
+
+        destroySession(id);
+
+        req.flash("alertMessage", "Success delete data User");
+        req.flash("alertStatus", "warning");
+        res.redirect("/user");
     });
 
     app.post('/wa', (req, res) => {
@@ -279,7 +297,7 @@ module.exports = function (app, io) {
 
         client.sendMessage(number, message).then(response => {
             try {
-                ChatHistory.create({ 
+                ChatHistory.create({
                     username: sender,
                     number_send: number,
                     message: message
