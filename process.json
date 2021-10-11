@@ -1,5 +1,6 @@
 {
-    "watch": ["server", "client"],
+    "script": "app.js",
+    "watch": true,
     "ignore_watch" : [
         "node_modules",
         "session/whatsapp-session*.json", 
@@ -8,5 +9,6 @@
     ],
     "watch_options": {
         "followSymlinks": false
-    }
+    },
+    "name": "ServerWa"
 }
