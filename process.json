@@ -1,6 +1,11 @@
 {
     "watch": ["server", "client"],
-    "ignore_watch" : ["node_modules","session/whatsapp-session*.json", "session/whatsapp-sessions.json"],
+    "ignore_watch" : [
+        "node_modules",
+        "session/whatsapp-session*.json", 
+        "session/whatsapp-sessions.json", 
+        "session/*"
+    ],
     "watch_options": {
         "followSymlinks": false
     }
