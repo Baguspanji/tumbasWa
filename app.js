@@ -2,13 +2,6 @@ const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 
-const expressLayouts = require('express-ejs-layouts');
-
-const session = require('express-session')
-const flash = require('connect-flash')
-
-const path = require('path');
-
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -20,38 +13,9 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 // Configure
-app.use(flash());
-app.use(express.json());
-app.use(express.urlencoded({
-    extended: true
-}));
+require('./config/config')(app, express)
 
-var sesi = {
-    secret: 'top_secret',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        secure: false,
-        maxAge: 3600,
-        expires: new Date(Date.now() + 3600000)
-    }
-}
-
-app.use(session(sesi))
-
-app.use(express.static(path.join(__dirname, './public')));
-
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
-app.use(expressLayouts)
-app.set('layout', 'layouts/layout');
-
-// app.get('/', (req, res) => {
-//     res.sendFile('views/index-multiple.html', {
-//         root: __dirname
-//     });
-// });
-
+// Route
 require('./whats-app')(app, io);
 require('./route/web')(app)
 
@@ -61,15 +25,16 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-// app.use(function (err, req, res, next) {
-//     // set locals, only providing error in development
-//     res.locals.message = err.message;
-//     res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-//     // render the error page
-//     res.status(err.status || 500);
-//     res.send('error');
-// });
+if (app.get('env') === 'development') {
+    app.use((err, req, res, next) => {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err,
+            title: 'error'
+        });
+    });
+}
 
 try {
     server.listen(port, () => console.log(`Server listen on http://localhost:${port}`))
