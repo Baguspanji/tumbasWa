@@ -6,7 +6,6 @@ const qrcode = require('qrcode');
 const fs = require('fs');
 
 const { phoneNumberFormatter } = require('./helper/formatter');
-const ChatHistory = require('./model/chatHistory');
 
 module.exports = function (app, io) {
 
@@ -296,17 +295,6 @@ module.exports = function (app, io) {
         const client = sessions.find(sess => sess.id == sender).client;
 
         client.sendMessage(number, message).then(response => {
-            try {
-                ChatHistory.create({
-                    username: sender,
-                    number_send: number,
-                    message: message
-                }).then(res => {
-                    console.log(res);
-                });
-            } catch (error) {
-                console.log(error);
-            }
 
             res.status(200).json({
                 status: true,
