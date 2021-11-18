@@ -113,10 +113,7 @@ module.exports = function (app, io) {
             client.initialize();
 
             // Menghapus pada file sessions
-            const savedSessions = getSessionsFile();
-            const sessionIndex = savedSessions.findIndex(sess => sess.id == id);
-            savedSessions.splice(sessionIndex, 1);
-            setSessionsFile(savedSessions);
+            destroySession(id)
 
             io.emit('remove-session', id);
         });
