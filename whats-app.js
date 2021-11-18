@@ -196,37 +196,6 @@ module.exports = function (app, io) {
 
             destroySession(data.id)
         });
-
-        // socket.on('wa-message', function (data) {
-
-        //     const sender = data.sender;
-        //     const number = phoneNumberFormatter(data.number);
-        //     const message = data.message;
-
-        //     const client = sessions.find(sess => sess.id == sender).client;
-
-        //     client.sendMessage(number, message).then(response => {
-        //         console.log({
-        //             status: true,
-        //             response: response
-        //         });
-        //     }).catch(err => {
-        //         console.log({
-        //             status: false,
-        //             response: err
-        //         });
-        //     });
-        // });
-    });
-
-    app.get('/destroy/:id', (req, res) => {
-        var id = req.params.id
-
-        destroySession(id);
-
-        req.flash("alertMessage", "Success delete data User");
-        req.flash("alertStatus", "warning");
-        res.redirect("/user");
     });
 
     app.post('/wa', (req, res) => {
