@@ -1,0 +1,29 @@
+main {
+  padding-top: 40px;
+}
+
+.auth {
+  padding-top: 60px;
+}
+
+.hide {
+  display: none;
+}
+
+.profile-user-img {
+  width: 200px;
+  height: 200px;
+}
+
+#link {
+  color: blue;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.language-json {
+  background-color: darkslategray;
+  padding: 16px;
+  border-radius: 8px;
+  height: 80px;
+}

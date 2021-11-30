@@ -1,0 +1,65 @@
+<div class="container auth">
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-4">
+            <div class="card rounded-3 border 0 shadow">
+                <div class="card-body text-center">
+                    <h4>Login WhatsApp Direct</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card rounded-3 border 0 shadow">
+                <div class="card-body">
+                    <div class="alert alert-danger text-center hide" id="message">
+                        Login gagal
+                    </div>
+
+                    <form method="POST" id="auth-form">
+                        <!-- Email input -->
+                        <div class="mb-4">
+                            <label class="form-label" for="username">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" />
+                        </div>
+
+                        <!-- Password input -->
+                        <div class="mb-4">
+                            <label class="form-label" for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" />
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var frm = $('#auth-form')
+    var host = window.location.host
+    frm.submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                if (data.username != null) {
+                    localStorage.setItem('username', data.username);
+                    localStorage.setItem('name', data.name);
+                    if (data.isAdmin == true) {
+                        localStorage.setItem('isAdmin', true);
+                        window.location = '/user/list'
+                    } else {
+                        window.location = '/user/profile'
+                    }
+                }
+            }
+        });
+    })
+</script>

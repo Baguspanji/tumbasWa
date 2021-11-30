@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card border-0 shadow rounded-3">
+                <div class="card-body text-center">
+                    <h4>WhatsApp Direct</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var username = localStorage.getItem('username');
+    if (username == null || username == undefined) {
+        window.location = '/login'
+    }
+</script>

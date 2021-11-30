@@ -19,10 +19,16 @@
   },
   "homepage": "https://github.com/Baguspanji/tumbasWa#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-cors": "^0.0.3",
+    "express-ejs-layouts": "^2.5.1",
     "express-validator": "^6.13.0",
+    "glob": "^7.2.0",
     "http": "^0.0.1-security",
+    "method-override": "^3.0.0",
+    "mongoose": "^6.0.14",
     "qrcode": "^1.4.4",
     "socket.io": "^4.3.2",
     "whatsapp-web.js": "^1.15.1"
