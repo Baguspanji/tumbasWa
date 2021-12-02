@@ -19,8 +19,6 @@ require('./config/config')(app, express)
 // WA
 require('./whats-app')(app, io);
 
-
-
 // error handler
 if (app.get('env') === 'development') {
     app.use((err, req, res, next) => {

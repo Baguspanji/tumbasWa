@@ -2,10 +2,6 @@ const cors = require('express-cors')
 const expressLayouts = require('express-ejs-layouts');
 
 const path = require('path')
-const glob = require('glob')
-const rootPath = path.normalize(__dirname + '/..');
-
-const methodOverride = require('method-override');
 
 module.exports = function (app, express) {
 
@@ -15,8 +11,6 @@ module.exports = function (app, express) {
             'github.com', 'google.com'
         ]
     }))
-
-    app.use(methodOverride("_method"));
 
     app.use(express.static(path.join('app/public')));
 
@@ -30,15 +24,11 @@ module.exports = function (app, express) {
         extended: true
     }));
 
-    var models = glob.sync(rootPath + '/app/models/*.js');
-    models.forEach(function (model) {
-        require(model);
-    });
+    require('../app/models/users');
 
-    var controllers = glob.sync(rootPath + '/app/controllers/*.js');
-    controllers.forEach((controller) => {
-        require(controller)(app);
-    });
+    require('../app/controllers/auth')(app);
+    require('../app/controllers/home')(app);
+    require('../app/controllers/user')(app);
 
     return app
 }

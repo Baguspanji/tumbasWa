@@ -47,7 +47,7 @@ module.exports = function (app, io) {
         }
 
         const client = new Client({
-            restartOnAuthFail: true,
+            restartOnAuthFail: false,
             puppeteer: {
                 headless: true,
                 args: [
