@@ -28,6 +28,7 @@
     "http": "^0.0.1-security",
     "mongoose": "^6.0.14",
     "qrcode": "^1.4.4",
-    "socket.io": "^4.3.2"
+    "socket.io": "^4.3.2",
+    "whatsapp-web.js": "^1.15.2"
   }
 }
