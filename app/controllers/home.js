@@ -1,16 +1,14 @@
-const express = require('express');
-const router = express.Router();
-// const mongoose = require('mongoose');
-// const Users = mongoose.model('Users');
 
-module.exports = (app) => {
-    app.use('/', router);
-};
+let io
 
-router.get('/', (req, res) => {
+exports.initIo = (server) => {
+    io = require('socket.io')(server);
+}
+
+exports.home = (req, res) => {
     data = {
         'title': 'Dashboard',
     }
 
     res.render('index', data)
-})
+}

@@ -1,9 +1,51 @@
 <div class="container">
+
     <div class="row">
         <div class="col-md-12">
             <div class="card border-0 shadow rounded-3">
                 <div class="card-body text-center">
-                    <h4>WhatsApp Direct</h4>
+                    <h3>WhatsApp</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow rounded-3">
+                <div class="card-body">
+                    <h5 class="card-title">Log WhatsApp</h5>
+                    <hr>
+
+                    <div class="card-body">
+                        <div class="client-container">
+                            <div class="client hide">
+                                <img src="" alt=" QR Code" id="qrcode">
+                                <ul class="logs"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow rounded-3">
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="client-id" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="client-id" value=""
+                                readonly />
+                        </div>
+                        <!-- <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" value="panji@gmail.id"
+                                aria-describedby="emailHelp" />
+                        </div> -->
+                        <button type="button" class="btn btn-info text-white" id="add-client-btn">Connect</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -11,8 +53,72 @@
 </div>
 
 <script>
-    var username = localStorage.getItem('username');
-    if (username == null || username == undefined) {
-        window.location = '/login'
-    }
+    var username = 'admin';
+    $('#client-id').val(username)
+
+    $(document).ready(function () {
+        // client-side
+        const socket = io('ws://localhost:3000');
+        // Ketika button tambah diklik
+        $('#add-client-btn').click(function () {
+            var clientId = $('#client-id').val();
+            var clientDescription = $('#client-description').val();
+            var template = $('.client').first().clone()
+                .removeClass('hide')
+                .addClass(clientId);
+            $('.client-container').append(template);
+            socket.emit('create-session', {
+                id: clientId,
+                description: clientDescription
+            });
+        });
+        socket.on('init', function (data) {
+            $('.client-container .client').not(':first').remove();
+            // console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var session = data[i];
+                if (session.id == username) {
+                    var clientId = session.id;
+                    var clientDescription = session.description;
+                    var template = $('.client').first().clone()
+                        .removeClass('hide')
+                        .addClass(clientId);
+                    $('.client-container').append(template);
+                    if (session.ready) {
+                        $(`.client.${session.id} .logs`).append($('<li>').text('Whatsapp is connected!'));
+                        $(`.client.${session.id} #qrcode`).hide();
+                        $('#add-client-btn').addClass('disabled');
+                    } else {
+                        $(`.client.${session.id} .logs`).append($('<li>').text('Connecting...'));
+                    }
+                }
+            }
+        });
+        socket.on('message', function (data) {
+            if (data.id == username) {
+                $(`.client.${data.id} .logs`).append($('<li>').text(data.text));
+            }
+        });
+        socket.on('qr', function (data) {
+            if (data.id == username) {
+                $(`.client.${data.id} #qrcode`).attr('src', data.src);
+                $(`.client.${data.id} #qrcode`).show();
+            }
+        });
+        socket.on('ready', function (data) {
+            if (data.id == username) {
+                $(`.client.${data.id} #qrcode`).hide();
+            }
+        });
+        socket.on('authenticated', function (data) {
+            if (data.id == username) {
+                $(`.client.${data.id} #qrcode`).hide();
+            }
+        });
+        socket.on('remove-session', function (id) {
+            if (id == username) {
+                $('#add-client-btn').removeClass('disabled');
+            }
+        });
+    });
 </script>

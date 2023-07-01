@@ -7,9 +7,7 @@ module.exports = function (app, express) {
 
     // Configure
     app.use(cors({
-        allowedOrigins: [
-            'github.com', 'google.com'
-        ]
+        allowedOrigins: ['*']
     }))
 
     app.use(express.static(path.join('app/public')));
@@ -24,11 +22,8 @@ module.exports = function (app, express) {
         extended: true
     }));
 
-    require('../app/models/users');
-
-    require('../app/controllers/auth')(app);
-    require('../app/controllers/home')(app);
-    require('../app/controllers/user')(app);
+    // Routes
+    app.use('/', require('../app/routes'));
 
     return app
 }

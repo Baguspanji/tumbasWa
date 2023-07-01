@@ -1,23 +1,22 @@
 const express = require('express');
 
 const http = require('http');
-const socketIO = require('socket.io');
 
 const port = process.env.PORT || 3000;
 const app = express();
 
 const server = http.createServer(app);
-const io = socketIO(server);
-
-const db = require('./config/mongo_config');
-
-const mongoose = require('mongoose');
 
 // Configure
 require('./config/config')(app, express)
 
 // WA
-require('./whats-app')(app, io);
+require('./whats-app').initIo(server)
+require('./whats-app').createSessionsFileIfNotExists()
+require('./whats-app').initWhatsApp()
+require('./whats-app').routes(app)
+
+// require('./app/controllers/home').initIo(server)
 
 // error handler
 if (app.get('env') === 'development') {
@@ -35,7 +34,3 @@ try {
 } catch (error) {
     console.error('Unable to start server:', error);
 }
-
-mongoose.connect(db.uri)
-    .then(() => console.log("database mongoDB is Connected"))
-    .catch((err) => console.log(err));

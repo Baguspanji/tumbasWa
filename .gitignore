@@ -1,7 +1,9 @@
 node_modules/*
 package-lock.json
 yarn.lock
-session.json
 
 session/whatsapp-session*.json
 session/whatsapp-sessions.json
+
+.wwebjs_auth/*
+.wwebjs_cache/*
