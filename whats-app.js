@@ -12,7 +12,7 @@ const SESSIONS_FILE = "./session/whatsapp-sessions.json";
 let io;
 
 const setSessionsFile = async (sessions) => {
-    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions), function (err) {  
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions), function (err) {
         if (err) throw err;
     });
 };
@@ -44,7 +44,7 @@ exports.initWhatsApp = async () => {
 
             if (savedSessions[index] != null) {
                 await setSessionsFile(savedSessions);
-                
+
                 createSession(data.username);
             }
         });
@@ -59,6 +59,11 @@ exports.initWhatsApp = async () => {
         socket.on("kill-session", function (data) {
             destroySession(data.username);
         });
+    });
+
+    const savedSessions = getSessionsFile();
+    savedSessions.forEach((sess) => {
+        if (sess.is_use) createSession(sess.username);
     });
 };
 
