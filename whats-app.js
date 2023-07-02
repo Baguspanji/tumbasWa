@@ -274,8 +274,8 @@ exports.routes = (app) => {
             const { username, message } = req.body;
             const number = phoneNumberFormatter(req.body.number);
 
-            const client = sessions.find((sess) => sess.username == username).client;
-            if (client == undefined) {
+            const session = sessions.find((sess) => sess.username == username);
+            if (session == null) {
                 return res.status(500).json({
                     status: false,
                     response: "Session of username not register.",
@@ -283,7 +283,7 @@ exports.routes = (app) => {
             }
 
             try {
-                var response = await client.sendMessage(number, message);
+                var response = await session.client.sendMessage(number, message);
 
                 return res.status(200).json({
                     status: true,
