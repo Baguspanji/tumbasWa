@@ -162,7 +162,7 @@ const createSession = async (username) => {
     const userSession = sessions
     const user = userSession.findIndex((sess) => sess.username == username);
 
-    if (user != undefined || user != null) {
+    if (userSession[user] != null) {
         userSession[user].client = client;
     } else {
         userSession.push({
