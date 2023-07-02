@@ -159,13 +159,12 @@ const createSession = async (username) => {
         destroySession(username);
     });
 
-    const userSession = sessions
-    const user = userSession.findIndex((sess) => sess.username == username);
+    const user = sessions.findIndex((sess) => sess.username == username);
 
-    if (userSession[user] != null) {
-        userSession[user].client = client;
+    if (sessions[user] != null) {
+        sessions[user].client = client;
     } else {
-        userSession.push({
+        sessions.push({
             username: username,
             client: client
         })
