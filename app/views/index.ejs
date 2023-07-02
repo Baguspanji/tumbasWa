@@ -59,7 +59,8 @@
 </div>
 
 <script>
-    const socket = io('ws://localhost:3000');
+    const url = window.location.href;
+    const socket = io(`ws://${url}/socket.io`);
     let username = null
 
     $('#add-client-btn').click(function () {
