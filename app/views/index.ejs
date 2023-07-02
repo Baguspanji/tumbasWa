@@ -35,9 +35,15 @@
                 <div class="card-body">
                     <form>
                         <div class="mb-3">
-                            <label for="client-id" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="client-id" value=""
-                                readonly />
+                            <label for="client-select" class="form-label">Username</label>
+                            <select class="form-select" id="client-select">
+                                <option value="">Choose username</option>
+                                <%for(var i=0; i<users.length; i++) {%>
+                                    <option value="<%= users[i].username %>">
+                                        <%= users[i].username %>
+                                    </option>
+                                    <%}%>
+                            </select>
                         </div>
                         <!-- <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -53,70 +59,80 @@
 </div>
 
 <script>
-    var username = 'admin';
-    $('#client-id').val(username)
+    const socket = io('ws://localhost:3000');
+    let username = null
+
+    $('#add-client-btn').click(function () {
+        var clientSelect = $('#client-select').val();
+        if (clientSelect == '') {
+            alert('Please choose username!');
+            return;
+        }
+
+        username = clientSelect;
+
+        var template = $('.client').first().clone().removeClass('hide').addClass(clientSelect);
+        $('.client-container').append(template);
+
+        socket.emit('initClient', {
+            username: username
+        });
+    });
 
     $(document).ready(function () {
-        // client-side
-        const socket = io('ws://localhost:3000');
-        // Ketika button tambah diklik
-        $('#add-client-btn').click(function () {
-            var clientId = $('#client-id').val();
-            var clientDescription = $('#client-description').val();
-            var template = $('.client').first().clone()
-                .removeClass('hide')
-                .addClass(clientId);
-            $('.client-container').append(template);
-            socket.emit('create-session', {
-                id: clientId,
-                description: clientDescription
-            });
-        });
-        socket.on('init', function (data) {
+        socket.on('init', function (session) {
             $('.client-container .client').not(':first').remove();
             // console.log(data);
-            for (var i = 0; i < data.length; i++) {
-                var session = data[i];
-                if (session.id == username) {
-                    var clientId = session.id;
-                    var clientDescription = session.description;
-                    var template = $('.client').first().clone()
-                        .removeClass('hide')
-                        .addClass(clientId);
-                    $('.client-container').append(template);
-                    if (session.ready) {
-                        $(`.client.${session.id} .logs`).append($('<li>').text('Whatsapp is connected!'));
-                        $(`.client.${session.id} #qrcode`).hide();
-                        $('#add-client-btn').addClass('disabled');
-                    } else {
-                        $(`.client.${session.id} .logs`).append($('<li>').text('Connecting...'));
-                    }
+
+            if (session.username == username) {
+                var clientId = session.username;
+                var template = $('.client').first().clone().removeClass('hide').addClass(clientId);
+
+                $('.client-container').append(template);
+
+                if (session.ready) {
+
+                    $(`.client.${session.username} .logs`).append($('<li>').text('Whatsapp is Connected!'));
+                    $(`.client.${session.username} #qrcode`).hide();
+                    $('#add-client-btn').addClass('disabled');
+                } else {
+                    socket.emit('create-session', {
+                        username: username
+                    });
+                    $(`.client.${session.username} .logs`).append($('<li>').text('Connecting...'));
                 }
             }
         });
+
         socket.on('message', function (data) {
-            if (data.id == username) {
-                $(`.client.${data.id} .logs`).append($('<li>').text(data.text));
+            if (data.username == username) {
+                $(`.client.${data.username} .logs`).append($('<li>').text(data.text));
             }
         });
+
         socket.on('qr', function (data) {
-            if (data.id == username) {
-                $(`.client.${data.id} #qrcode`).attr('src', data.src);
-                $(`.client.${data.id} #qrcode`).show();
+            // console.log(data);
+            if (data.username == username) {
+                $(`.client.${data.username} #qrcode`).attr('src', data.src);
+                $(`.client.${data.username} #qrcode`).show();
             }
         });
+
         socket.on('ready', function (data) {
-            if (data.id == username) {
-                $(`.client.${data.id} #qrcode`).hide();
+            if (data.username == username) {
+                $(`.client.${data.username} #qrcode`).hide();
             }
         });
+
         socket.on('authenticated', function (data) {
-            if (data.id == username) {
-                $(`.client.${data.id} #qrcode`).hide();
+            if (data.username == username) {
+                $(`.client.${data.username} #qrcode`).hide();
             }
         });
-        socket.on('remove-session', function (id) {
-            if (id == username) {
+
+        socket.on('remove-session', function (data) {
+            if (data.username == username) {
+                username = null;
                 $('#add-client-btn').removeClass('disabled');
             }
         });

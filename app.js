@@ -1,18 +1,22 @@
 const express = require('express');
-
 const http = require('http');
 
 const port = process.env.PORT || 3000;
 const app = express();
+const fs = require('fs');
 
 const server = http.createServer(app);
+
+if (!fs.existsSync('./session')) {
+    fs.mkdirSync('./session');
+}
 
 // Configure
 require('./config/config')(app, express)
 
 // WA
-require('./whats-app').initIo(server)
 require('./whats-app').createSessionsFileIfNotExists()
+require('./whats-app').initIo(server)
 require('./whats-app').initWhatsApp()
 require('./whats-app').routes(app)
 
