@@ -60,7 +60,9 @@
 
 <script>
     const url = window.location.href;
-    const socket = io();
+    const socket = io(`http://103.175.219.176`, {
+        path: '/wsapp'
+    });
     let username = null
 
     $('#add-client-btn').click(function () {
