@@ -6,6 +6,9 @@ const qrcode = require("qrcode");
 const fs = require("fs");
 const { phoneNumberFormatter } = require("./helper/formatter");
 
+const bycript = require("bcrypt");
+var salt = bycript.genSaltSync(10);
+
 let sessions = [];
 const SESSIONS_FILE = "./session/whatsapp-sessions.json";
 
@@ -37,7 +40,7 @@ exports.createSessionsFileIfNotExists = () => {
 exports.initWhatsApp = async () => {
     io.on("connection", async (socket) => {
         socket.on("create-session", async (data) => {
-            console.log("Create session: " + data.username);
+            console.log("Init session: " + data.username);
             let savedSessions = getSessionsFile();
             const index = savedSessions.findIndex((sess) => sess.username == data.username);
             savedSessions[index].is_use = true;
@@ -52,6 +55,15 @@ exports.initWhatsApp = async () => {
         socket.on("initClient", async (data) => {
             const savedSessions = getSessionsFile();
             const index = savedSessions.findIndex((sess) => sess.username == data.username);
+
+            var check = await bycript.compare(data.password, savedSessions[index].password);
+
+            if (!check) {
+                io.emit("message", {
+                    username: data.username,
+                    text: "Password is incorrect!",
+                });
+            }
 
             socket.emit("init", savedSessions[index]);
         });
@@ -93,25 +105,48 @@ const createSession = async (username) => {
 
     client.initialize();
 
+    let count_qr = 0;
     client.on("qr", async (qr) => {
-        console.log("QR RECEIVED", qr);
+        console.log("QR RECEIVED : ", qr);
+        if (count_qr == 1) {
+            client.destroy();
 
-        qrcode.toDataURL(qr, (err, url) => {
-            if (err) {
-                console.log("Error: ", err);
-                return;
-            }
-
+            console.log("QR Code expired");
             io.emit("qr", {
                 username: username,
-                src: url,
+                src: '',
             });
 
             io.emit("message", {
                 username: username,
-                text: "QR Code received, scan please!",
+                text: "QR Code expired, please reload!",
             });
-        });
+
+            const savedSessions = getSessionsFile();
+            const index = savedSessions.findIndex((sess) => sess.username == username);
+            savedSessions[index].ready = false;
+            savedSessions[index].is_use = false;
+            await setSessionsFile(savedSessions);
+        } else {
+            qrcode.toDataURL(qr, (err, url) => {
+                if (err) {
+                    console.log("Error: ", err);
+                    return;
+                }
+    
+                io.emit("qr", {
+                    username: username,
+                    src: url,
+                });
+    
+                io.emit("message", {
+                    username: username,
+                    text: "QR Code received, scan please!",
+                });
+            });
+        }
+
+        count_qr++;
     });
 
     client.on("ready", async () => {
@@ -159,6 +194,10 @@ const createSession = async (username) => {
         destroySession(username);
     });
 
+    client.on("message", async (msg) => {
+        console.log(`MESSAGE RECEIVED ${username} :`, msg);
+    });
+
     const user = sessions.findIndex((sess) => sess.username == username);
 
     if (sessions[user] != null) {
@@ -170,7 +209,6 @@ const createSession = async (username) => {
         })
     }
 
-    // Menambahkan session ke file
     const savedSessions = getSessionsFile();
     const index = savedSessions.findIndex(sess => sess.username == username);
 
@@ -210,47 +248,6 @@ const destroySession = async (username) => {
 };
 
 exports.routes = (app) => {
-    // app.post('/wa', (req, res) => {
-    //     let tipe = req.body.tipe
-    //     let pesan = req.body.pesan
-    //     let wilayah = req.body.wilayah
-    //     let body = ""
-
-    //     if (tipe === "1") {
-    //         if (pesan === "") {
-    //             body = "Admin || Pesanan Baru !! Mohon cek Laman Admin !!"
-    //         }
-    //     } else if (tipe === "2") {
-    //         if (pesan === "") {
-    //             body = "Kurir || Pesanan Baru !! Mohon cek Laman Pesanan !!"
-    //         }
-    //     } else {
-    //         body = pesan
-    //     }
-
-    //     const client = sessions.find(sess => sess.id == 'admin').client;
-
-    //     if (wilayah == "purwosari") {
-    //         client.sendMessage("6285815421118-1614597478@g.us", body)
-    //             .then(() => {
-    //                 console.log("Send Success");
-    //                 res.json({
-    //                     'wilayah': 'purwosari',
-    //                     'data': body
-    //                 })
-    //             });
-    //     } else {
-    //         client.sendMessage("6285815421118-1612822412@g.us", body)
-    //             .then(() => {
-    //                 console.log("Send Success");
-    //                 res.json({
-    //                     'wilayah': 'rembang',
-    //                     'data': body
-    //                 })
-    //             });
-    //     }
-    // })
-
     // Send message
     app.post(
         "/send-message",

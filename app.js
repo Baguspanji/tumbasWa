@@ -34,7 +34,7 @@ if (app.get('env') === 'development') {
 }
 
 try {
-    server.listen(port, () => console.log(`Server listen on http://localhost:${port}`))
+    server.listen(port, () => console.log(`SERVER LISTEN ON PORT : ${port}`))
 } catch (error) {
     console.error('Unable to start server:', error);
 }

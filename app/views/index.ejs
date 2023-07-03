@@ -1,5 +1,4 @@
 <div class="container">
-
     <div class="row">
         <div class="col-md-12">
             <div class="card border-0 shadow rounded-3">
@@ -21,7 +20,7 @@
                     <div class="card-body">
                         <div class="client-container">
                             <div class="client hide">
-                                <img src="" alt=" QR Code" id="qrcode">
+                                <img src="" alt=" QR Code" id="qrcode" class="hide">
                                 <ul class="logs"></ul>
                             </div>
                         </div>
@@ -45,11 +44,10 @@
                                     <%}%>
                             </select>
                         </div>
-                        <!-- <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" value="panji@gmail.id"
-                                aria-describedby="emailHelp" />
-                        </div> -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" />
+                        </div>
                         <button type="button" class="btn btn-info text-white" id="add-client-btn">Connect</button>
                     </form>
                 </div>
@@ -59,14 +57,19 @@
 </div>
 
 <script>
-    const url = window.location.href;
-    const socket = io(`http://103.175.219.176`);
+    const socket = io();
     let username = null
 
     $('#add-client-btn').click(function () {
         var clientSelect = $('#client-select').val();
+        var password = $('#password').val();
         if (clientSelect == '') {
             alert('Please choose username!');
+            return;
+        }
+
+        if (password == '') {
+            alert('Please enter password!');
             return;
         }
 
@@ -76,8 +79,11 @@
         $('.client-container').append(template);
 
         socket.emit('initClient', {
-            username: username
+            username: username,
+            password: password
         });
+
+        $('#password').val('');
     });
 
     $(document).ready(function () {
@@ -92,9 +98,7 @@
                 $('.client-container').append(template);
 
                 if (session.ready) {
-
                     $(`.client.${session.username} .logs`).append($('<li>').text('Whatsapp is Connected!'));
-                    $(`.client.${session.username} #qrcode`).hide();
                     $('#add-client-btn').addClass('disabled');
                 } else {
                     socket.emit('create-session', {
@@ -113,21 +117,26 @@
 
         socket.on('qr', function (data) {
             // console.log(data);
+            if (data.src != '' || data.src != null || data.src != undefined) {
+                $(`.client.${data.username} #qrcode`).removeClass('hide');
+            } else {
+                $(`.client.${data.username} #qrcode`).addClass('hide');
+            }
+            
             if (data.username == username) {
                 $(`.client.${data.username} #qrcode`).attr('src', data.src);
-                $(`.client.${data.username} #qrcode`).show();
             }
         });
 
         socket.on('ready', function (data) {
             if (data.username == username) {
-                $(`.client.${data.username} #qrcode`).hide();
+                $(`.client.${data.username} #qrcode`).addClass('hide');
             }
         });
 
         socket.on('authenticated', function (data) {
             if (data.username == username) {
-                $(`.client.${data.username} #qrcode`).hide();
+                $(`.client.${data.username} #qrcode`).addClass('hide');
             }
         });
 
