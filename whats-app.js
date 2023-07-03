@@ -63,9 +63,10 @@ exports.initWhatsApp = async () => {
                     username: data.username,
                     text: "Password is incorrect!",
                 });
+            } else {
+                socket.emit("init", savedSessions[index]);
             }
 
-            socket.emit("init", savedSessions[index]);
         });
 
         socket.on("kill-session", function (data) {
