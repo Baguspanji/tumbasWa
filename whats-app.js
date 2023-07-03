@@ -109,7 +109,7 @@ const createSession = async (username) => {
     let count_qr = 0;
     client.on("qr", async (qr) => {
         console.log("QR RECEIVED : ", qr);
-        if (count_qr == 1) {
+        if (count_qr == 3) {
             client.destroy();
 
             console.log("QR Code expired");
@@ -196,7 +196,15 @@ const createSession = async (username) => {
     });
 
     client.on("message", async (msg) => {
-        console.log(`MESSAGE RECEIVED ${username} :`, msg);
+        var from = msg.from;
+        var to = msg.to;
+        var message = msg.body;
+
+        console.log(`MESSAGE RECEIVED ${username} :`, {
+            from,
+            to,
+            message,
+        });
     });
 
     const user = sessions.findIndex((sess) => sess.username == username);
