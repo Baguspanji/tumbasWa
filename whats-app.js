@@ -15,7 +15,7 @@ const SESSIONS_FILE = "./session/whatsapp-sessions.json";
 let io;
 
 const setSessionsFile = async (sessions) => {
-    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions), function (err) {
+    fs.writeFileSync(SESSIONS_FILE, JSON.stringify(sessions), (err) => {
         if (err) throw err;
     });
 };
@@ -69,7 +69,7 @@ exports.initWhatsApp = async () => {
 
         });
 
-        socket.on("kill-session", function (data) {
+        socket.on("kill-session", async (data) => {
             destroySession(data.username);
         });
     });
@@ -134,12 +134,12 @@ const createSession = async (username) => {
                     console.log("Error: ", err);
                     return;
                 }
-    
+
                 io.emit("qr", {
                     username: username,
                     src: url,
                 });
-    
+
                 io.emit("message", {
                     username: username,
                     text: "QR Code received, scan please!",
