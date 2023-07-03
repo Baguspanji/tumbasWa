@@ -151,7 +151,7 @@ const createSession = async (username) => {
     });
 
     client.on("ready", async () => {
-        console.log("READY");
+        console.log("READY : " + username);
         io.emit("ready", {
             username: username,
         });
@@ -168,7 +168,7 @@ const createSession = async (username) => {
     });
 
     client.on("authenticated", async (session) => {
-        console.log("AUTHENTICATED");
+        console.log("AUTHENTICATED : " + username);
         io.emit("authenticated", {
             username: username,
         });
