@@ -7,6 +7,7 @@ const fs = require("fs");
 const { phoneNumberFormatter } = require("./helper/formatter");
 
 const bycript = require("bcrypt");
+const e = require("express");
 var salt = bycript.genSaltSync(10);
 
 let sessions = [];
@@ -284,7 +285,12 @@ exports.routes = (app) => {
             }
 
             const { username, message } = req.body;
-            const number = phoneNumberFormatter(req.body.number);
+            let number = ''
+            if (req.body.number.substring(req.body.number.length - 4) == "g.us") {
+                number = req.body.number;
+            } else {
+                number = phoneNumberFormatter(req.body.number);
+            }
 
             const session = sessions.find((sess) => sess.username == username);
             if (session == null) {
