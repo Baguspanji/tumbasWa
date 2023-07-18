@@ -205,6 +205,12 @@ const createSession = async (username) => {
             to,
             message,
         });
+
+        if (msg.body === '!ping') {
+            msg.reply('server is online!');
+
+            console.log(`MESSAGE REPLIED ${username} :`, msg);
+        }
     });
 
     const user = sessions.findIndex((sess) => sess.username == username);
