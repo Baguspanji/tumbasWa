@@ -207,7 +207,7 @@ const createSession = async (username) => {
         });
 
         if (msg.body === '!ping') {
-            msg.reply('server is online!');
+            client.sendMessage(msg.from, 'server is online');
 
             console.log(`MESSAGE REPLIED ${username} :`, msg);
         }
